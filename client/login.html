@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="login.css">
+	<title></title>
+</head>
+<body>
+	<form  class="formContainer" autocomplete="off">
+		<input type="text" name="username" placeholder="Username" id="username" class="username">
+		<input type="text" name="password" placeholder="Password" id="password" class="username">
+		<button type="submit" class="login">Login</button>
+	</form>
+
+	<script>
+
+		/*~~~~~~~~~= Script for login =~~~~~~~~~*/ 
+
+		const submitBtn = document.querySelector(".login")
+		const nameField= document.querySelector("#username")
+		const pwdField= document.querySelector("#password")
+
+		/*On button click*/ 
+		submitBtn.addEventListener('click', async (e)=>{
+			e.preventDefault()
+			try {
+				const res = await fetch('/login',{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					username:nameField.value,
+					password: pwdField.value,
+				})
+				})
+				const data = await res.json()
+				console.log(data)
+				/*saving token to local storage*/ 
+				if( data.token) { 
+					localStorage.setItem("token", data.token)
+					window.location.href = "/index.html"
+				}
+				throw	(data.msg)
+			}catch (err) {
+				console.log(err)
+			}
+		})
+	</script>
+</body>
+</html>

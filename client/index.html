@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ECHO-Chat</title>
+	<link rel="stylesheet" href="style.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<script src="/socket.io/socket.io.js" defer></script>
+	<script src="app.js" defer></script>
+</head>
+<body>
+
+	<div class="dashboard">
+		<div class="banner">
+			<img id="bannerAvatar"> 
+			<h3 id="bannerText"></h3>
+		</div>
+		<div class="members"> </div>
+	</div>
+
+	<div class="chat">
+		<div class="msgContainer"></div>
+		<div class="inputContainer">
+			<form id="sendForm" autocomplete="off">
+				<input type="text" id="sendInput" placeholder="Message...">
+				<button type ="submit" id="sendBtn"><img id="sendIcon" src="paper-plane-solid.svg"></button>
+			</form>
+		</div>
+	</div>
+
+</body>
+</html>
