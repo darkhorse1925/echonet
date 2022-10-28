@@ -45,8 +45,17 @@ readFile(__dirname + '/db.json', 'utf8', (err, result) =>{
 	}
 })
 
+let messages = []
+function getMessages() {
+	readFile(__dirname + '/messages.json', 'utf8', (err,result)=>{
+		if (err)
+			console.log(err)
+		messages = JSON.parse(result)
+	})
+}
+getMessages()
 
-/*~~~~~~~~~= SOCKET IO =~~~~~~~~~*/
+/*~~~~~~~~~= SOCKETIO START =~~~~~~~~~*/
 
 const io = new Server(server)
 
@@ -62,26 +71,16 @@ io.use((socket, next) => {
 	}
 })
 
-let messages = []
-function getMessages() {
-	readFile(__dirname + '/messages.json', 'utf8', (err,result)=>{
-		if (err)
-			console.log(err)
-		messages = JSON.parse(result)
-		console.log(messages)
-	})
-}
-getMessages()
 
-
+//save messages to database
 function saveMessages(message) {
-	if (message.length > 100) 
-		message.shift()
+	if (messages.length > 100) {
+		messages.shift()
+	}
 	messages.push(message)
 		writeFile(__dirname + '/messages.json', JSON.stringify(messages), (err, result)=> {
 			if (err)
 				console.log(err)
-			console.log(messages)
 		})
 }
 
@@ -91,25 +90,36 @@ io.of('/').on('connection', socket => {
 	/*sends dashboard details*/ 
 	status = status.map((s) => {
 		if (s.name === socket.user) {
-			s.last_seen = 'Online'
+			s.last_seen = 10000000000000 //  represents Online
 		}
 		return s
 	})
+	socket.emit('welcome',socket.user)
 	io.sockets.emit('dashboard-details', status)
 	socket.broadcast.emit('someone-entered', socket.user) // remove this ~ dashboard does the job
 
-	socket.emit('welcome',socket.user)
 	socket.emit('prev_messages', messages)
 	socket.emit('scroll', "please scroll") //testing
 
-	/*Receive message from user*/ 
+	
+	//Send if user is TYPING 
+	socket.on('typing', (data) => {
+		if(data) {
+			socket.broadcast.emit('on-typing', socket.user)
+		} else {
+			socket.broadcast.emit('off-typing', socket.user)
+		}
+	})
+
+	/*Receive message from user and broadcast*/ 
 	socket.on('user-message', data => {
 		let msgBroadcast =  {name: socket.user, msg: data, time: Date.now()}
 		socket.broadcast.emit('other-message', msgBroadcast)
 		saveMessages(msgBroadcast)
 	})
 
-	/*on disconnect*/ 
+
+	/*on DISCONNECT*/ 
 	socket.on('disconnect', () => {
 		let lastSeen= Date.now()
 		status = status.map((s) =>  {

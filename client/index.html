@@ -7,9 +7,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<script src="/socket.io/socket.io.js" defer></script>
 	<script src="app.js" defer></script>
+	<script src="/particles.min.js"></script>
+	<script>
+		particlesJS.load('particles-js', '/particlesjs-config.json', function () {
+			console.log('callback - particles.js config loaded');
+		});
+	</script>
 </head>
 <body>
-
+	<div id="particles-js"></div>
 	<div class="dashboard">
 		<div class="banner">
 			<img id="bannerAvatar"> 
@@ -23,10 +29,14 @@
 		<div class="inputContainer">
 			<form id="sendForm" autocomplete="off">
 				<input type="text" id="sendInput" placeholder="Message...">
-				<button type ="submit" id="sendBtn"><img id="sendIcon" src="paper-plane-solid.svg"></button>
+				<button type ="submit" id="sendBtn">
+					<img id="sendIcon" src="paper-plane-solid.svg">
+				</button>
 			</form>
 		</div>
 	</div>
+
+
 
 </body>
 </html>

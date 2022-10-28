@@ -2,25 +2,44 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="stylesheet" href="login.css">
 	<title></title>
 </head>
 <body>
-	<form  class="formContainer" autocomplete="off">
-		<input type="text" name="username" placeholder="Username" id="username" class="username">
-		<input type="text" name="password" placeholder="Password" id="password" class="username">
-		<button type="submit" class="login">Login</button>
-	</form>
+	<script src="/particles.min.js"></script>
+	<script>
+		particlesJS.load('particles-js', '/particlesjs-config.json', function () {
+			console.log('callback - particles.js config loaded');
+		});
+	</script>
+	<div id="particles-js">
+	</div>
+		<form  class="formContainer" autocomplete="off">
+			<h1 class="bulb" >ECHO-NET</h1>
+			<div class="alert"></div>
+			<input type="text" name="username" placeholder="Username" class="username">
+			<div class="wrapper">
+				<input type="password" name="password" placeholder="Password" class="password">
+				<div class="imgWrapper"><img id="light-switch" src="/eye-solid.svg" alt=""></div>
+			</div>
+			<button type="submit" class="btn-link">
+				<span class="link-inner">OPEN</span>
+			</button>
+
+		</form>
 
 	<script>
 
 		/*~~~~~~~~~= Script for login =~~~~~~~~~*/ 
 
-		const submitBtn = document.querySelector(".login")
-		const nameField= document.querySelector("#username")
-		const pwdField= document.querySelector("#password")
+		const submitBtn = document.querySelector(".btn-link")
+		const nameField= document.querySelector(".username")
+		const pwdField= document.querySelector(".password")
+		const lightSwitch= document.querySelector("#light-switch")
 
 		/*On button click*/ 
+		const alarm = false
 		submitBtn.addEventListener('click', async (e)=>{
 			e.preventDefault()
 			try {
@@ -39,11 +58,46 @@
 				/*saving token to local storage*/ 
 				if( data.token) { 
 					localStorage.setItem("token", data.token)
-					window.location.href = "/index.html"
+					window.location.href = "/"
 				}
 				throw	(data.msg)
 			}catch (err) {
-				console.log(err)
+				let i = 0;
+				document.querySelector('.alert').textContent = ''
+				document.querySelector('.alert').style.visibility= "visible" 
+				function typewritter () {
+					if(i < err.length){
+						document.querySelector('.alert').textContent += err.charAt(i)
+						i++;
+						setTimeout(typewritter, 50)
+					}
+				}
+				typewritter()
+				setTimeout(offalert, 5000)
+				function offalert() {
+					document.querySelector('.alert').textContent = ''
+					document.querySelector('.alert').style.visibility= "hidden" 
+				}
+			}
+		})
+
+		let toggle = true;
+		lightSwitch.addEventListener('click',()=>{
+			document.querySelector('.formContainer').classList.toggle("bulb-border")
+			if(toggle) {
+				document.querySelector('.bulb').style.visibility = "visible"
+				toggle = (!toggle)
+				lightSwitch.src= "/eye-spin.svg"
+				pwdField.type="text"
+				nameField.style.color="#fbf71a"
+				pwdField.style.color="#fbf71a"
+			} else {
+				document.querySelector('.bulb').style.visibility = "hidden"
+				lightSwitch.src= "/eye-solid.svg"
+				toggle = true
+				pwdField.type="password"
+				pwdField.style.color="white"
+				nameField.style.color="white"
 			}
 		})
 	</script>
